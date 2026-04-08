@@ -19,7 +19,7 @@ app.use(helmet()); // Adds security headers
 
 const allowedOrigins = [
     'http://localhost:5173', // Your local client for development
-    'https://your-netlify-site-name.netlify.app' // REPLACE with your deployed client URL
+    'https://aistudyhelper252.netlify.app/' // REPLACE with your deployed client URL
 ];
 
 const corsOptions = {
