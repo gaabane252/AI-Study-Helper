@@ -18,17 +18,33 @@ const app = express();
 app.use(helmet()); // Adds security headers
 
 const allowedOrigins = [
-    'http://localhost:5173', // Your local client for development
-    'https://aistudyhelper252.netlify.app' // REPLACE with your deployed client URL
+    'http://localhost:5173' // Your local client for development
+];
+
+// Allow the main Netlify site + deploy previews/branch subdomains
+// Examples:
+// - https://aistudyhelper252.netlify.app
+// - https://deploy-preview-12--aistudyhelper252.netlify.app
+// - https://feature-x--aistudyhelper252.netlify.app
+const allowedOriginPatterns = [
+    /^https:\/\/aistudyhelper252\.netlify\.app$/,
+    /^https:\/\/[a-z0-9-]+--aistudyhelper252\.netlify\.app$/
 ];
 
 const corsOptions = {
     origin: function (origin, callback) {
-        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        // Some mobile in-app browsers/webviews can send Origin: null
+        if (!origin || origin === 'null') {
             callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
+            return;
         }
+
+        if (allowedOrigins.includes(origin) || allowedOriginPatterns.some((re) => re.test(origin))) {
+            callback(null, true);
+            return;
+        }
+
+        callback(new Error('Not allowed by CORS'));
     }
 };
 
